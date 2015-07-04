@@ -1,6 +1,6 @@
 /*
  * This program is modeified from an example provided by the RC522 library:
- * https://github.com/miguelbalboa  /rfid
+ * https://github.com/miguelbalboa/rfid
  * 
  * Author: BoolLi
  * 
@@ -26,11 +26,11 @@
 MFRC522 mfrc522(SS_PIN, RST_PIN);	// Create MFRC522 instance
 
 // Define keys
-MFRC522::MIFARE_Key NFCDefaultkeyA;
-MFRC522::MIFARE_Key NFCkeyA;
-MFRC522::MIFARE_Key NFCkeyB;
-MFRC522::MIFARE_Key MADkeyA;
-MFRC522::MIFARE_Key MADkeyB;
+MFRC522::MIFARE_Key NFCDefaultKeyA;
+MFRC522::MIFARE_Key NFCKeyA;
+MFRC522::MIFARE_Key NFCKeyB;
+MFRC522::MIFARE_Key MADKeyA;
+MFRC522::MIFARE_Key MADKeyB;
 
 /*
  * Prints a sector using key A
@@ -56,6 +56,25 @@ void printSector(byte sector, MFRC522::MIFARE_Key *keyA)
     Serial.println();
 }
 
+/*
+ * Prints all the sectors
+ */
+void printAllSectors(MFRC522::MIFARE_Key *MADKeyA, MFRC522::MIFARE_Key *NFCKeyA) 
+{
+  byte sector = 0;
+  printSector(sector, MADKeyA);
+
+  for (sector = 1; sector <= 15; sector++) {
+    printSector(sector, NFCKeyA);
+  }
+}
+
+/*
+ * Copies a byte array to a Mifare key
+ * Arguments:
+ *  array: the byte array
+ *  key: the Miare key
+ */
 void copyBytesToKey(byte *array,  MFRC522::MIFARE_Key *key)
 {
   for (int i = 0; i < 6; i++)
@@ -72,18 +91,15 @@ void dump_byte_array(byte *buffer, byte bufferSize) {
     }
 }
 
-
-void printAllSectors() 
-{
-  byte sector = 0;
-  printSector(sector, &MADkeyA);
-
-  for (sector = 1; sector <= 15; sector++) {
-    printSector(sector, &NFCkeyA);
-  }
-}
-
-
+/**
+ * Writes a block of data to the tag
+ * 
+ * Arguments:
+ *  sector: the sector number
+ *  blockAddr: the destination block address
+ *  dataBlock: a pointer to a 16-byte block 
+ *  keyB: a pointer to a keyB
+ */
 void writeBlock(byte sector, byte blockAddr, byte* dataBlock, MFRC522::MIFARE_Key *keyB)
 {
     byte trailerBlock = sector * 4 + 3;
@@ -131,14 +147,14 @@ void writeDefaultMessage() {
                       0x00, 0x00, 0x00, 0x00, 
                       0x00, 0x00, 0x00, 0x00};   
 
-  writeBlock(1,4, dataBlock14, &NFCkeyB);
-  writeBlock(1,5, dataBlock15, &NFCkeyB);
-  writeBlock(1,6, dataBlock16, &NFCkeyB);
+  writeBlock(1,4, dataBlock14, &NFCKeyB);
+  writeBlock(1,5, dataBlock15, &NFCKeyB);
+  writeBlock(1,6, dataBlock16, &NFCKeyB);
 
   for (int i = 2; i <= 15; i++) {
-    writeBlock(i, 4 * i, dataBlockNull, &NFCkeyB);
-    writeBlock(i, 4 * i + 1, dataBlockNull, &NFCkeyB);
-    writeBlock(i, 4 * i + 2, dataBlockNull, &NFCkeyB);
+    writeBlock(i, 4 * i, dataBlockNull, &NFCKeyB);
+    writeBlock(i, 4 * i + 1, dataBlockNull, &NFCKeyB);
+    writeBlock(i, 4 * i + 2, dataBlockNull, &NFCKeyB);
   }
 }
 
@@ -165,14 +181,14 @@ void writePlainText() {
                       0x00, 0x00, 0x00, 0x00, 
                       0x00, 0x00, 0x00, 0x00};   
 
-  writeBlock(1,4, dataBlock14, &NFCkeyB);
-  writeBlock(1,5, dataBlock15, &NFCkeyB);
-  writeBlock(1,6, dataBlock16, &NFCkeyB);
+  writeBlock(1,4, dataBlock14, &NFCKeyB);
+  writeBlock(1,5, dataBlock15, &NFCKeyB);
+  writeBlock(1,6, dataBlock16, &NFCKeyB);
 
   for (int i = 2; i <= 15; i++) {
-    writeBlock(i, 4 * i, dataBlockNull, &NFCkeyB);
-    writeBlock(i, 4 * i + 1, dataBlockNull, &NFCkeyB);
-    writeBlock(i, 4 * i + 2, dataBlockNull, &NFCkeyB);
+    writeBlock(i, 4 * i, dataBlockNull, &NFCKeyB);
+    writeBlock(i, 4 * i + 1, dataBlockNull, &NFCKeyB);
+    writeBlock(i, 4 * i + 2, dataBlockNull, &NFCKeyB);
   }
 }
 
@@ -185,19 +201,19 @@ void setup() {
 	mfrc522.PCD_Init();		// Init MFRC522
 
   byte NFCKeyADefaultByteArray[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-  copyBytesToKey(NFCKeyADefaultByteArray, &NFCDefaultkeyA);
+  copyBytesToKey(NFCKeyADefaultByteArray, &NFCDefaultKeyA);
 
   byte NFCKeyAByteArray[] = {0xD3, 0xF7, 0xD3, 0xF7, 0xD3, 0xF7};
-  copyBytesToKey(NFCKeyAByteArray, &NFCkeyA);
+  copyBytesToKey(NFCKeyAByteArray, &NFCKeyA);
 
   byte NFCKeyBByteArray[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-  copyBytesToKey(NFCKeyBByteArray, &NFCkeyB);
+  copyBytesToKey(NFCKeyBByteArray, &NFCKeyB);
 
   byte MADKeyAByteArray[] = {0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5};
-  copyBytesToKey(MADKeyAByteArray, &MADkeyA);
+  copyBytesToKey(MADKeyAByteArray, &MADKeyA);
 
   byte MADKeyBByteArray[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-  copyBytesToKey(MADKeyBByteArray, &MADkeyB);
+  copyBytesToKey(MADKeyBByteArray, &MADKeyB);
  
 	ShowReaderDetails();	// Show details of PCD - MFRC522 Card Reader details
 	Serial.println(F("Scan PICC to see UID, type, and data blocks..."));
@@ -250,12 +266,12 @@ void loop() {
                       0xFF, 0xFF, 0xFF, 0xFF};   */
                  
   /*
-  writeBlock(2,8, dataBlock, &NFCkeyB);
-  writeBlock(2,9, dataBlock, &NFCkeyB);
-  writeBlock(2,10, dataBlock, &NFCkeyB);
-  writeBlock(3,12, dataBlock, &NFCkeyB); */
+  writeBlock(2,8, dataBlock, &NFCKeyB);
+  writeBlock(2,9, dataBlock, &NFCKeyB);
+  writeBlock(2,10, dataBlock, &NFCKeyB);
+  writeBlock(3,12, dataBlock, &NFCKeyB); */
   //writePlainText();
-  printAllSectors();
+  printAllSectors(&MADKeyA, &NFCKeyA);
   
 	//mfrc522.PICC_DumpToSerial(&(mfrc522.uid));
 }
