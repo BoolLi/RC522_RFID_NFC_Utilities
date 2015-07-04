@@ -192,8 +192,6 @@ void writePlainText() {
   }
 }
 
-
-
 void setup() {
 	Serial.begin(9600);		// Initialize serial communications with the PC
 	while (!Serial);		// Do nothing if no serial port is opened (added for Arduinos based on ATMEGA32U4)
@@ -230,50 +228,13 @@ void loop() {
 		return;
 	}
 
-	// Dump debug info about the card; PICC_HaltA() is automatically called
-  //printAllSectors();
-
-  /* sector 0 block 0
-  byte dataBlock[] = {0x3E, 0x39, 0xAB, 0x7F, 
-                      0xD3, 0x88, 0x04, 0x00, 
-                      0x47, 0x41, 0x16, 0x57,  
-                      0x4D, 0x10, 0x34, 0x08}; */
-
   /* sector 0 block 3
   byte dataBlock[] = {0xA0, 0xA1, 0xA2, 0xA3, 
                       0xA4, 0xA5, 0x78, 0x77, 
                       0x88, 0xC1, 0xFF, 0xFF, 
                       0xFF, 0xFF, 0xFF, 0xFF};   */
-  /* sector 1 block 4 
-  byte dataBlock4[] = {0x00, 0x00, 0x03, 0x11, 
-                      0xD1, 0x01, 0x0D, 0x55, 
-                      0x01, 0x61, 0x64, 0x61, 
-                      0x66, 0x72, 0x75, 0x69};       */
-  /* sector 1 block 5 
-  byte dataBlock5[] = {0x74, 0x2E, 0x63, 0x6F, 
-                      0x6D, 0xFE, 0x00, 0x00, 
-                      0x00, 0x00, 0x00, 0x00, 
-                      0x00, 0x00, 0x00, 0x00};     */ 
-  /* sector 1 block 6 
-  byte dataBlock[] = {0x00, 0x00, 0x00, 0x00, 
-                      0x00, 0x00, 0x00, 0x00, 
-                      0x00, 0x00, 0x00, 0x00, 
-                      0x00, 0x00, 0x00, 0x00};   */
-  /* sector 1 block 7 
-  byte dataBlock[] = {0xD3, 0xF7, 0xD3, 0xF7, 
-                      0xD3, 0xF7, 0x7F, 0x07, 
-                      0x88, 0x40, 0xFF, 0xFF, 
-                      0xFF, 0xFF, 0xFF, 0xFF};   */
                  
-  /*
-  writeBlock(2,8, dataBlock, &NFCKeyB);
-  writeBlock(2,9, dataBlock, &NFCKeyB);
-  writeBlock(2,10, dataBlock, &NFCKeyB);
-  writeBlock(3,12, dataBlock, &NFCKeyB); */
-  //writePlainText();
   printAllSectors(&MADKeyA, &NFCKeyA);
-  
-	//mfrc522.PICC_DumpToSerial(&(mfrc522.uid));
 }
 
 void ShowReaderDetails() {
