@@ -65,6 +65,21 @@ void RC522_RFID_Utilities::showReaderDetails()
   }
 }
 
+bool RC522_RFID_Utilities::detectNewCard()
+{
+    // Look for new cards
+  if (!mfrc522->PICC_IsNewCardPresent()) {
+    return false;
+  }
+
+  // Select one of the cards
+  if (!mfrc522->PICC_ReadCardSerial()) {
+    return false;
+  }
+
+  return true;
+}
+
 void RC522_RFID_Utilities::copyBytesToKey(byte *array,  MFRC522::MIFARE_Key *key)
 {
   for (int i = 0; i < 6; i++)
@@ -90,16 +105,6 @@ void RC522_RFID_Utilities::printSector(byte sector, MFRC522::MIFARE_Key *keyA)
 
 void RC522_RFID_Utilities::printAllSectors(MFRC522::MIFARE_Key *MADKeyA, MFRC522::MIFARE_Key *NFCKeyA)
 {
-  // Look for new cards
-  if (!mfrc522->PICC_IsNewCardPresent()) {
-    return;
-  }
-
-  // Select one of the cards
-  if (!mfrc522->PICC_ReadCardSerial()) {
-    return;
-  }
-
   byte sector = 0;
   printSector(sector, MADKeyA);
 
@@ -119,7 +124,7 @@ void RC522_RFID_Utilities::dump_byte_array(byte *buffer, byte bufferSize)
 void RC522_RFID_Utilities::writeBlock(byte sector, byte blockAddr, byte* dataBlock, MFRC522::MIFARE_Key *keyB)
 {
   byte trailerBlock = sector * 4 + 3;
-  Serial.println(F("Authenticating again using key B..."));
+  Serial.println(F("Authenticating using key B..."));
   byte status = mfrc522->PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_B, trailerBlock, keyB, &(mfrc522->uid));
   if (status != MFRC522::STATUS_OK) {
     Serial.print(F("PCD_Authenticate() failed: "));
@@ -141,16 +146,6 @@ void RC522_RFID_Utilities::writeBlock(byte sector, byte blockAddr, byte* dataBlo
 
 void RC522_RFID_Utilities::formatToNDEF(MFRC522::MIFARE_Key *OldMADKeyB, MFRC522::MIFARE_Key *OldNFCKeyB)
 {
-  // Look for new cards
-  if (!mfrc522->PICC_IsNewCardPresent()) {
-    return;
-  }
-
-  // Select one of the cards
-  if (!mfrc522->PICC_ReadCardSerial()) {
-    return;
-  }
-
   // Block 1 and 2 of sector 0
   byte dataBlock01[] = {0x14, 0x01, 0x03, 0xE1,
                         0x03, 0xE1, 0x03, 0xE1,

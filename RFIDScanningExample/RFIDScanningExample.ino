@@ -38,7 +38,9 @@ void setup() {
 }
 
 void loop() {
-  rc522Utilities.printAllSectors(&rc522Utilities.MADKeyA, &rc522Utilities.NFCKeyA);
+  if (rc522Utilities.detectNewCard()) {
+    rc522Utilities.printAllSectors(&rc522Utilities.MADKeyA, &rc522Utilities.NFCKeyA);
+  }
 }
 
 

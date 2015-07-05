@@ -30,6 +30,11 @@ public:
 	 */
 	void showReaderDetails();
 
+	/**
+	 * looks for a new card. Returns true if a new card is detected. Otherwise the function returns false.
+	 */
+	bool detectNewCard();
+
 	/*
 	 * Copies a byte array to a Mifare key
 	 * Arguments:
