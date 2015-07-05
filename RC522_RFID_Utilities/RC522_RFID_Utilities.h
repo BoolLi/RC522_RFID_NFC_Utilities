@@ -6,7 +6,7 @@
 
 
 
-class RC522_RFID_Utilities 
+class RC522_RFID_Utilities
 {
 public:
 	MFRC522 *mfrc522;
@@ -40,7 +40,7 @@ public:
 
 	/*
 	 * Prints a sector using key A
-	 * 
+	 *
 	 * Arguments:
 	 *  sector: the sector number
 	 *  keyA: the authentication key
@@ -59,37 +59,52 @@ public:
 
 	/**
 	 * Writes a block of data to the tag
-	 * 
+	 *
 	 * Arguments:
 	 *  sector: the sector number
 	 *  blockAddr: the destination block address
-	 *  dataBlock: a pointer to a 16-byte block 
+	 *  dataBlock: a pointer to a 16-byte block
 	 *  keyB: a pointer to a keyB
 	 */
 	void writeBlock(byte sector, byte blockAddr, byte* dataBlock, MFRC522::MIFARE_Key *keyB);
 
+
+	/**
+	 * Formats the RFID tag to NDEF format using a MAD key B and NFC key B.
+	 * By default both keys are 0xFFFFFF.
+	 *
+	 * Arguments:
+	 *	MadKeyB: key B to write to the MAD block
+	 * 	NFCKeyB: key B to write to the NFC block
+	 */
+	void formatToNDEF(MFRC522::MIFARE_Key *OldMADKeyB, MFRC522::MIFARE_Key *OldNFCKeyB);
+
 private:
 	/* sector 1 block 4 */
-	byte dataBlock14[16] ={0x03, 0x11, 
-	                      0xD1, 0x01, 0x0D, 0x55, 
-	                      0x01, 0x61, 0x64, 0x61, 
-	                      0x66, 0x72, 0x75, 0x69, 0x74, 0x2E};       
+	byte dataBlock14[16] = {0x03, 0x11,
+	                        0xD1, 0x01, 0x0D, 0x55,
+	                        0x01, 0x61, 0x64, 0x61,
+	                        0x66, 0x72, 0x75, 0x69, 0x74, 0x2E
+	                       };
 	/* sector 1 block 5 */
-	byte dataBlock15[16] = { 0x63, 0x6F, 
-	                      0x6D, 0xFE, 0x00, 0x00, 
-	                      0x00, 0x00, 0x00, 0x00, 
-	                      0x00, 0x00, 0x00, 0x00, 0x00, 0x00};     
+	byte dataBlock15[16] = { 0x63, 0x6F,
+	                         0x6D, 0xFE, 0x00, 0x00,
+	                         0x00, 0x00, 0x00, 0x00,
+	                         0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+	                       };
 	/* sector 1 block 6 */
-	byte dataBlock16[16] = {0x00, 0x00, 0x00, 0x00, 
-	                      0x00, 0x00, 0x00, 0x00, 
-	                      0x00, 0x00, 0x00, 0x00, 
-	                      0x00, 0x00, 0x00, 0x00};   
+	byte dataBlock16[16] = {0x00, 0x00, 0x00, 0x00,
+	                        0x00, 0x00, 0x00, 0x00,
+	                        0x00, 0x00, 0x00, 0x00,
+	                        0x00, 0x00, 0x00, 0x00
+	                       };
 
 	/* Rest of the data blocks are null */
-	byte dataBlockNull[16] = {0x00, 0x00, 0x00, 0x00, 
-	                      0x00, 0x00, 0x00, 0x00, 
-	                      0x00, 0x00, 0x00, 0x00, 
-	                      0x00, 0x00, 0x00, 0x00};   
+	byte dataBlockNull[16] = {0x00, 0x00, 0x00, 0x00,
+	                          0x00, 0x00, 0x00, 0x00,
+	                          0x00, 0x00, 0x00, 0x00,
+	                          0x00, 0x00, 0x00, 0x00
+	                         };
 
 
 	// Those two methods are not used. Set them as private for now.
