@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <RC522_RFID_Utilities.h>
+#include <string.h>
 
 RC522_RFID_Utilities::RC522_RFID_Utilities()
   : mfrc522(NULL)
@@ -209,7 +210,11 @@ void RC522_RFID_Utilities::formatToNDEF(MFRC522::MIFARE_Key *OldMADKeyB, MFRC522
   }
 }
 
-
+char* RC522_RFID_Utilities::stringToNDEFMessage(char* string) 
+{
+  int stringLen = strlen(string);
+  
+}
 
 
 void RC522_RFID_Utilities::writeDefaultMessage() {

@@ -84,6 +84,17 @@ public:
 	 */
 	void formatToNDEF(MFRC522::MIFARE_Key *OldMADKeyB, MFRC522::MIFARE_Key *OldNFCKeyB);
 
+	/**
+	 * Converts a string to a NDEF formatted message.
+	 *
+	 * Arguments:
+	 * 	string: a pointer to a string
+	 * Returns:
+	 * 	a pointer to a string that represents the NDEF formatted message. Users need to free the space
+	 *  allocated by the pointer later.
+	 */
+	char* stringToNDEFMessage(char *string);
+
 private:
 	/* sector 1 block 4 */
 	byte dataBlock14[16] = {0x03, 0x11,
