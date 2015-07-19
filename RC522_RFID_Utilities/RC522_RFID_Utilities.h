@@ -93,7 +93,7 @@ public:
 	 * 	a pointer to a string that represents the NDEF formatted message. Users need to free the space
 	 *  allocated by the pointer later.
 	 */
-	char* stringToNDEFMessage(char *string);
+	byte* textToNDEFMessage(char *string);
 
 private:
 	/* sector 1 block 4 */

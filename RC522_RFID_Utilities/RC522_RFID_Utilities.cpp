@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <RC522_RFID_Utilities.h>
 #include <string.h>
+#include <stdlib.h>
 
 RC522_RFID_Utilities::RC522_RFID_Utilities()
   : mfrc522(NULL)
@@ -210,10 +211,44 @@ void RC522_RFID_Utilities::formatToNDEF(MFRC522::MIFARE_Key *OldMADKeyB, MFRC522
   }
 }
 
-char* RC522_RFID_Utilities::stringToNDEFMessage(char* string) 
+byte* RC522_RFID_Utilities::textToNDEFMessage(char* text) 
 {
-  int stringLen = strlen(string);
-  
+  int textLen = strlen(text);
+  byte tag = 0x03; // T in TLV
+  byte length = textLen + 8; // V = header + type length + payload length + record type + status byte + language code[2] + text + end byte
+
+  // V in TLV
+  byte header = 0b11010001;  // 0xD1
+  byte typeLength = 0x01;
+  byte payloadLength = textLen + 3; // payload = status byte + languate code[2] + text
+  byte recordType = 0x54; // plain text
+  byte statusByte = 0x02; // length of the languate code is 2
+  byte languateCode[2] = {0x65, 0x6E}; // "en" for English
+  byte terminator = 0xFE;
+
+
+  byte *result = (byte *) malloc(length + 2); // T: 1 byte. L: 1 byte. V: length byte (textLen + 7). 
+  if (result == NULL) {
+    return NULL;
+  }
+
+  // copy T
+  memcpy(result, &tag, 1); // copy field type tag (0x03 = NDEF message)
+
+  // copy L
+  memcpy(result + 1, &length, 1); // copy length field
+
+  // copy V
+  memcpy(result + 2, &header, 1); // copy the NDEF header
+  memcpy(result + 3, &typeLength, 1); // copy the type length field
+  memcpy(result + 4, &payloadLength, 1); // copy the payload length
+  memcpy(result + 5, &recordType, 1); // copy the record type
+  memcpy(result + 6, &statusByte, 1); // copy the status type
+  memcpy(result + 7, &languateCode, 2); // copy the language code
+  memcpy(result + 9, text, textLen); // copy the text
+  memcpy(result + 9 + textLen, &terminator, 1); // copy the end byte
+
+  return result;
 }
 
 
