@@ -251,6 +251,45 @@ byte RC522_RFID_Utilities::textToNDEFMessage(char* text, byte* result)
   return totalLength;
 }
 
+void RC522_RFID_Utilities::writeTextToTag(char* text, byte sector, byte blockAddr, MFRC522::MIFARE_Key *keyB) {
+  byte* NDEFText;
+  byte textLength = textToNDEFMessage(text, NDEFText);
+
+  // create an array of data blocks
+  byte numOfLines = textLength % 16 == 0? textLength / 16: textLength / 16 + 1;
+  byte **blocks = new byte* [numOfLines];
+  for (int i = 0; i < numOfLines; i++) {
+    blocks[i] = new byte[16];
+  }
+
+  // copy data to data blocks
+  int blockIndex = 0;
+  int byteIndex = 0;
+  for (int i = 0; i < textLength; i++) {
+    blocks[blockIndex][byteIndex] = text[i];
+    if (byteIndex >= 15) {
+      blockIndex++;
+      byteIndex = 0;
+    } else {
+      byteIndex++;
+    }
+  }
+
+  // write to the tag
+  for (int i = 0; i < numOfLines; i++) {
+    writeBlock(sector, blockAddr, blocks[i], keyB);
+    blockAddr++;
+  }
+
+  // free memory
+  for (int i = 0; i < numOfLines; i++) {
+    delete[] blocks[i];
+  }
+  delete[] blocks;
+  delete NDEFText;
+
+}
+
 bool RC522_RFID_Utilities::tryKeyOnSector(byte command, byte sector, MFRC522::MIFARE_Key *key)
 {
   byte trailerBlock = sector * 4 + 3; // get the trailer block

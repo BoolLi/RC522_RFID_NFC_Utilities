@@ -96,9 +96,14 @@ public:
 	 */
 	 byte textToNDEFMessage(char *string, byte* result);
 
+
+	 void writeTextToTag(char* text, byte sector, byte blockAddr, MFRC522::MIFARE_Key *keyB);
+
 	 bool tryKeyOnSector(byte command, byte sector, MFRC522::MIFARE_Key *key);
 
 	 void tryKeyADictionaryOnSector(byte sector);
+
+	 
 
 	private:
 	/* sector 1 block 4 */
