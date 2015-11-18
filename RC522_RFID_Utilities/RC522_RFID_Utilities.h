@@ -96,6 +96,8 @@ public:
 	 */
 	 byte textToNDEFMessage(char *string, byte* result);
 
+	 void writeByteToTag(byte b, byte blockAddr, MFRC522::MIFARE_Key *keyB);
+	 byte readByteFromTag(byte blockAddr, MFRC522::MIFARE_Key *keyA);
 
 	 void writeTextToTag(char* text, byte sector, byte blockAddr, MFRC522::MIFARE_Key *keyB);
 
@@ -103,7 +105,8 @@ public:
 
 	 void tryKeyADictionaryOnSector(byte sector);
 
-	 
+	 void writeDefaultMessage();
+	 void writePlainText();
 
 	private:
 	/* sector 1 block 4 */
@@ -134,8 +137,8 @@ public:
 
 
 	// Those two methods are not used. Set them as private for now.
-		void writeDefaultMessage();
-		void writePlainText();
+		
+		
 
 
 	};

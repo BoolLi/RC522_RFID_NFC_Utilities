@@ -197,9 +197,10 @@ void RC522_RFID_Utilities::formatToNDEF(MFRC522::MIFARE_Key *OldMADKeyB, MFRC522
   // write to sector 0 block 3 first using the default key B
   writeBlock(0, 3, dataBlock03, OldMADKeyB);
   // write to the rest of the blocks using the new MAD key B
-  writeBlock(0, 1, dataBlock01, &MADKeyB);
-  writeBlock(0, 2, dataBlock02, &MADKeyB);
+  //writeBlock(0, 1, dataBlock01, &MADKeyB);
+  //writeBlock(0, 2, dataBlock02, &MADKeyB);
 
+  
   // format sector 1 to 15
   for (int i = 1; i <= 15; i++) {
     // format the trailer block first
@@ -251,10 +252,45 @@ byte RC522_RFID_Utilities::textToNDEFMessage(char* text, byte* result)
   return totalLength;
 }
 
+void RC522_RFID_Utilities::writeByteToTag(byte b, byte blockAddr, MFRC522::MIFARE_Key *keyB) {
+  byte data[] = {b, 0x00, 0x00, 0x00,
+                 0x00, 0x00, 0x00, 0x00,
+                 0x00, 0x00, 0x00, 0x00,
+                 0x00, 0x00, 0x00, 0x00
+             };
+  writeBlock(blockAddr / 4, blockAddr, data, keyB);
+}
+
+byte RC522_RFID_Utilities::readByteFromTag(byte blockAddr, MFRC522::MIFARE_Key *keyA) {
+  byte trailerBlock = blockAddr / 4 * 4;
+  Serial.println(F("Authenticating using key A..."));
+  byte status = mfrc522->PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A, trailerBlock, keyA, &(mfrc522->uid));
+  if (status != MFRC522::STATUS_OK) {
+    Serial.print(F("PCD_Authenticate() failed: "));
+    Serial.println(mfrc522->GetStatusCodeName(status));
+    return 0;
+  }
+
+  byte bufferSize = 18;
+  byte buffer[18];
+  byte readStatus = mfrc522->MIFARE_Read(blockAddr,   ///< MIFARE Classic: The block (0-0xff) number. MIFARE Ultralight: The first page to return data from.
+              buffer,   ///< The buffer to store the data in
+              &bufferSize  ///< Buffer size, at least 18 bytes. Also number of bytes returned if STATUS_OK.
+            );
+
+  if (readStatus != MFRC522::STATUS_OK) {
+    Serial.print(F("Reading failed failed: "));
+    Serial.println(mfrc522->GetStatusCodeName(readStatus));
+    return 0;
+  }
+
+  return buffer[0];
+}
+
 void RC522_RFID_Utilities::writeTextToTag(char* text, byte sector, byte blockAddr, MFRC522::MIFARE_Key *keyB) {
   byte* NDEFText;
   byte textLength = textToNDEFMessage(text, NDEFText);
-
+  
   // create an array of data blocks
   byte numOfLines = textLength % 16 == 0? textLength / 16: textLength / 16 + 1;
   byte **blocks = new byte* [numOfLines];

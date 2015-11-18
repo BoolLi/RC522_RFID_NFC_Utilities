@@ -38,6 +38,33 @@ void setup() {
 }
 
 void loop() {
+
+  if (rc522Utilities.detectNewCard()) {
+
+    /* To write a byte to a tag, use the function below.
+       The first paramater is the byte you want to write to the tag. The example below uses 'c'. 
+       Note that you can only write one byte (one character) using this function, so things like 'ab'
+       won't work.
+
+       The second parameter is the block address. Just use 5 since it is the first block of the
+       second sector. 
+
+       The third parameter is the keyB to use. By default it uses &rc522Utilities.NFCKeyB. 
+    */
+    rc522Utilities.writeByteToTag('c', 5, &rc522Utilities.NFCKeyB);
+
+    /* To read a byte from the tag, use the function below.
+     *  The first parameter is the block address. Since we just wrote a byte 'c' to block 5, we will be 
+     *  reading from block 5 as well.
+     *  
+     *  The second parameter is the keyA that is used to authenticate the read operation. By default it 
+     *  uses &rc522Utilities.NFCKeyA.
+     *  
+     *  The function returns a char. We can print that char using Serial.print(b).
+     */
+    char b = rc522Utilities.readByteFromTag(5, &rc522Utilities.NFCKeyA);
+    Serial.print(b);
+  }
 }
 
 

@@ -42,29 +42,29 @@ void loop() {
     rc522Utilities.formatToNDEF(&rc522Utilities.NFCDefaultKeyB, &rc522Utilities.NFCDefaultKeyB);
 
     //write some test messages to sector 1
-    /* sector 1 block 4 */
+    /* sector 1 block 4 
     byte dataBlock14[] = {0x03, 0x17, 0xD1, 0x01,
                           0x13, 0x54, 0x02, 0x65,
                           0x6E, 0x61, 0x62, 0x63,
                           0x64, 0x65, 0x66, 0x67
-                         };
-    /* sector 1 block 5 */
+                         }; */
+    /* sector 1 block 5 
     byte dataBlock15[] = {0x68, 0x69, 0x6A, 0x6B,
                           0x6C, 0x6D, 0x6E, 0x6F,
                           0x70, 0xFE, 0x00, 0x00,
                           0x00, 0x00, 0x00, 0x00
-                         };
-    /* sector 1 block 6 */
+                         }; */
+    /* sector 1 block 6 
     byte dataBlock16[] = {0x00, 0x00, 0x00, 0x00,
                           0x00, 0x00, 0x00, 0x00,
                           0x00, 0x00, 0x00, 0x00,
                           0x00, 0x00, 0x00, 0x00
-                         };
-  
+                         }; */
+    /*
     rc522Utilities.writeBlock(1, 4, dataBlock14, &rc522Utilities.NFCKeyB);
     rc522Utilities.writeBlock(1, 5, dataBlock15, &rc522Utilities.NFCKeyB);
     rc522Utilities.writeBlock(1, 6, dataBlock16, &rc522Utilities.NFCKeyB);
-
+    */
     rc522Utilities.printAllSectors(&rc522Utilities.MADKeyA, &rc522Utilities.NFCKeyA);
   }
 }
